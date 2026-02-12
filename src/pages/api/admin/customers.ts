@@ -26,8 +26,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             return res.status(200).json(users);
         } catch (error) {
-            console.error("Failed to fetch customers:", error);
-            return res.status(500).json({ error: "Internal Server Error" });
+            console.error("Detailed error fetching customers:", {
+                message: error instanceof Error ? error.message : "Unknown error",
+                stack: error instanceof Error ? error.stack : undefined,
+                error
+            });
+            return res.status(500).json({
+                error: "Internal Server Error",
+                details: error instanceof Error ? error.message : "Possible database connection issue or schema mismatch"
+            });
         }
     }
 

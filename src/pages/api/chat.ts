@@ -62,15 +62,21 @@ Your goal is to help users find housemaids and answer their questions profession
         if (!response.ok) {
             const errorData = await response.json();
             console.error('Groq API Error:', errorData);
-            throw new Error('Failed to communicate with Zenia');
+            return res.status(response.status).json({
+                message: 'Failed to communicate with Zenia',
+                error: errorData.error?.message || 'Groq API Error'
+            });
         }
 
         const data = await response.json();
         const reply = data.choices[0]?.message?.content || "I apologize, I'm having trouble processing your request right now.";
 
         res.status(200).json({ reply });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Chat API Error:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message
+        });
     }
 }

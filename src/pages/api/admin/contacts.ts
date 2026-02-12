@@ -16,8 +16,15 @@ export default async function handler(
             });
             return res.status(200).json(contacts);
         } catch (error: any) {
-            console.error("Error fetching contacts:", error);
-            return res.status(500).json({ error: "Failed to fetch contacts" });
+            console.error("Error fetching contacts:", {
+                message: error.message,
+                stack: error.stack,
+                error
+            });
+            return res.status(500).json({
+                error: "Failed to fetch contacts",
+                details: error.message
+            });
         }
     }
 
@@ -44,8 +51,15 @@ export default async function handler(
             });
             return res.status(200).json(contact);
         } catch (error: any) {
-            console.error("Error updating contact:", error);
-            return res.status(500).json({ error: "Failed to update contact" });
+            console.error("Error updating contact:", {
+                message: error.message,
+                stack: error.stack,
+                error
+            });
+            return res.status(500).json({
+                error: "Failed to update contact",
+                details: error.message
+            });
         }
     }
 

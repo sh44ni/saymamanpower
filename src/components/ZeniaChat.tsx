@@ -86,18 +86,26 @@ export default function ZeniaChat() {
                 }),
             });
 
-            if (!res.ok) throw new Error("Failed to send message");
-
             const data = await res.json();
+
+            if (!res.ok) {
+                if (data.error === 'MISSING_API_KEY') {
+                    throw new Error(chatLang === "en"
+                        ? "The chat agent is not configured correctly. Please contact support."
+                        : "مساعد الدردشة غير مهيأ بشكل صحيح. يرجى التواصل مع الدعم.");
+                }
+                throw new Error(data.message || "Failed to send message");
+            }
+
             setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-        } catch (error) {
+        } catch (error: any) {
             setMessages((prev) => [
                 ...prev,
                 {
                     role: "assistant",
-                    content: chatLang === "en"
+                    content: error.message || (chatLang === "en"
                         ? "I apologize, I'm having trouble connecting right now. Please try again later or contact us on WhatsApp."
-                        : "عذراً، أواجه مشكلة في الاتصال حالياً. يرجى المحاولة لاحقاً أو التواصل معنا عبر الواتساب."
+                        : "عذراً، أواجه مشكلة في الاتصال حالياً. يرجى المحاولة لاحقاً أو التواصل معنا عبر الواتساب.")
                 }
             ]);
         } finally {
