@@ -13,9 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     reviews: {
                         orderBy: { createdAt: "desc" },
                         include: {
-                            maid: {
-                                select: { name: true, nameAr: true } // context for the review
-                            }
+                            maid: true // Simplified from nested select
                         }
                     },
                     _count: {
