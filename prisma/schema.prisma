@@ -22,19 +22,18 @@ model Admin {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
   name          String?
-  phone         String?   @unique
-  image         String?
-  googleId      String?   @unique
-  emailVerified DateTime?
+  email         String    @unique
+  password      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  password      String?
-
-  accounts Account[]
-  sessions Session[]
-  reviews  Review[]
+  emailVerified DateTime?
+  googleId      String?   @unique
+  phone         String?   @unique
+  image         String?
+  accounts      Account[]
+  reviews       Review[]
+  sessions      Session[]
 }
 
 model Maid {
@@ -57,22 +56,20 @@ model Maid {
   previousCountriesAr String[] @default([])
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-
-  reviews Review[]
+  reviews             Review[]
 }
 
 model Review {
   id        String   @id @default(cuid())
   userId    String
   maidId    String?
-  rating    Int      // 1-5 stars
+  rating    Int
   comment   String?
-  hidden    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  maid Maid? @relation(fields: [maidId], references: [id], onDelete: Cascade)
+  hidden    Boolean  @default(false)
+  maid      Maid?    @relation(fields: [maidId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, maidId])
 }
@@ -83,7 +80,7 @@ model ContactForm {
   phone     String
   email     String?
   message   String
-  status    String   @default("new") // new, read, archived
+  status    String   @default("new")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -96,7 +93,6 @@ model AuthorizedEmail {
   updatedAt DateTime @updatedAt
 }
 
-// NextAuth.js Models
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -110,8 +106,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -121,8 +116,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
